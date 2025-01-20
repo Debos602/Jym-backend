@@ -1,75 +1,49 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema } from "mongoose";
+import { TUser } from "./user.interface";
 
-import { TUser } from './user.interface';
-
-const userSchema = new Schema<TUser>(
-  {
-    name: {
-      type: String,
-      required: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    role: {
-      type: String,
-      enum: ['user', 'admin'],
-      default: 'user',
-      required: true,
-    },
-    password: {
-      type: String,
-      required: true,
-    },
-    needsPasswordChange: {
-      type: Boolean,
-      default: true,
-    },
-    passwordChangedAt: {
-      type: Date,
-    },
-    phone: {
-      type: String,
-      required: true,
-    },
-    nid: {
-      type: String,
-      required: false,
-    },
-    drivingLicense: {
-      type: String,
-      required: false,
-    },
-    features: {
-      type: [String],
-      required: false,
+const userSchema = new Schema<TUser>({
+  name: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  role: {
+    type: String,
+    enum: ["admin", "trainer", "trainee"],
+    required: true,
+  },
+  password: {
+    type: String,
+    required: function () {
+      return this.role === "admin" || this.role === "trainer" || this.role === "trainee";
     },
   },
-  {
-    timestamps: true,
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
-);
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-// Password hashing middleware
-// userSchema.pre('save', async function (next) {
-//   if (!this.isModified('password')) {
-//     return next();
-//   }
+// Add a custom `toJSON` method to exclude the password field
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    // Delete password from the returned object
+    delete ret.password;
+    return ret;
+  },
+});
 
-//   try {
-//     // Assert that password is a string before hashing
-//     if (typeof this.password === 'string') {
-//       const salt = await bcrypt.genSalt(10);
-//       this.password = await bcrypt.hash(this.password, salt);
-//     } else {
-//       throw new Error('Password is missing or not a string');
-//     }
-//     next(); // Proceed to the next middleware
-//   } catch (error) {
-//     next(); // Pass any errors to the next middleware
-//   }
-// });
 
-export const UserModel = model<TUser>('User', userSchema);
+
+// Create a Mongoose model based on the schema
+const UserModel = mongoose.model<TUser>("User", userSchema);
+
+export default UserModel;

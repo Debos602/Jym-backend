@@ -1,23 +1,24 @@
-import { ObjectId } from 'mongoose';
+import { ObjectId, Document } from 'mongoose';
 
-export type TUser = {
+// Extend TUser from Document to access Mongoose instance methods like isModified, save, etc.
+export interface TUser extends Document {
   name: string;
   email: string;
-  role: 'user' | 'admin';
+  role: 'admin' | 'trainer' | 'trainee';
   password?: string;
-  confirmPassword?: string;
-  needsPasswordChange?: boolean;
-  passwordChangedAt?: Date;
-  phone: string;
-  nid?: string;
-  drivingLicense?: string;
-  features?: string[];
   createdAt?: Date;
   updatedAt?: Date;
-};
+}  // This will add Mongoose instance methods
+
+
 
 export interface TSignIn {
   user: ObjectId;
   email: string;
   password: string;
+}
+
+export interface TDecodedToken {
+  userId: string;
+  role: string;
 }

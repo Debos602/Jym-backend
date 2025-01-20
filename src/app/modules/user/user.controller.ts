@@ -1,56 +1,61 @@
-import { Request, Response } from 'express';
-import { TSignIn, TUser } from './user.interface';
-import { UserServices } from './user.service';
+import { Request, Response } from "express";
+import { userValidationSchema } from "./user.validation";
+import { UserServices } from "./user.service";
+import { TSignIn, TUser } from "./user.interface";
+import { ZodError } from "zod"; // Import ZodError to handle schema validation errors
+import UserModel from "./user.model";
 import jwt from 'jsonwebtoken';
-import { UserModel } from './user.model';
-import catchAsync from '../../utils/catcgAsync';
-import httpStatus from 'http-status';
 import bcrypt from 'bcrypt';
-import { userValidationSchema } from './user.validation';
 
-const SignUp = async (req: Request, res: Response) => {
+const adminRegister = async (req: Request, res: Response) => {
   try {
-    const user: TUser = req.body; // Correctly assigning `user` to be of type `TUser`
-    const zodParsedata = userValidationSchema.parse(user);
+    // Parse and validate the user input
+    const parsedUser = userValidationSchema.parse(req.body);
+    const user: TUser = parsedUser as TUser;
 
-    // Check if a user with the same email already exists
-    const isExistuser = await UserModel.findOne({ email: user.email });
+    // Call the createUser service to handle user creation
+    const { result, accessToken } = await UserServices.admingSignUpInDB(user);
 
-    if (isExistuser) {
-      return res.status(400).json({
-        success: false,
-        statusCode: 400,
-        message: 'User already exists with this email',
-      });
-    }
-
-    const result = await UserServices.createUser(zodParsedata);
-
-    if (!result) {
-      return res.status(404).json({
-        success: false,
-        statusCode: 404,
-        message: 'No data found',
-        data: {},
-      });
-    }
-
+    // Send the success response
     res.status(201).json({
       success: true,
-      message: 'User registered successfully',
-      data: result,
+      message: "admin logged in successfully",
+      data: { result, accessToken },
+      // Include the generated JWT token in the response
     });
-  } catch (err) {
-    console.error(err); // Log the error for debugging
+  } catch (error) {
+    console.error(error);
+
+    // Handle validation errors from Zod
+    if (error instanceof ZodError) {
+      const validationError = error.errors[0]; // Get the first validation error
+      return res.status(400).json({
+        success: false,
+        message: "Validation error occurred.",
+        errorDetails: {
+          field: validationError.path[0], // The field that caused the error
+          message: validationError.message, // The error message
+        },
+      });
+    }
+
+    // Check for specific custom errors
+    if (error instanceof Error && error.message === "Password is required") {
+      return res.status(400).json({
+        success: false,
+        message: "Password is required",
+      });
+    }
+
+    // Handle other errors (e.g., generic server errors)
     res.status(500).json({
       success: false,
-      message: 'An error occurred while creating the user',
-      error: err instanceof Error ? err.message : 'Unknown error', // Include error message
+      message: "An error occurred while processing the request.",
     });
   }
 };
 
-const SignIn = async (req: Request, res: Response) => {
+const adminSignIn = async (req: Request, res: Response) => {
   try {
     const { email, password }: TSignIn = req.body;
 
@@ -107,9 +112,6 @@ const SignIn = async (req: Request, res: Response) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        needsPasswordChange: user.needsPasswordChange,
-        passwordChangedAt: user.passwordChangedAt,
-        phone: user.phone,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
       },
@@ -124,192 +126,122 @@ const SignIn = async (req: Request, res: Response) => {
   }
 };
 
-const forgetPassword = async (req: Request, res: Response) => {
-  const email = req.body.email;
-  const result = await UserServices.forgetPassword(email);
-  res.status(200).json({
-    success: true,
-    statusCode: 200,
-    message: 'Reset link is genarated succesfully',
-    data: result,
-  });
-};
-const resetPassword = async (req: Request, res: Response) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  const result = await UserServices.resetPassword(req.body, token as string);
-  res.status(200).json({
-    success: true,
-    statusCode: 200,
-    message: 'Password is reset succesfully',
-    data: result,
-  });
-};
 
-const refreshToken = catchAsync(async (req: Request, res: Response) => {
-  // Extract the refreshToken from cookies
-  const { refreshToken } = req.cookies;
-
-  if (!refreshToken) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
-      success: false,
-      statusCode: httpStatus.UNAUTHORIZED,
-      message: 'Refresh token not found. Please login again.',
-    });
-  }
-
+const createTrainer = async (req: Request, res: Response) => {
   try {
-    // Call the service to refresh the token
-    const result = await UserServices.refreshToken(refreshToken);
+    // Parse and validate the user input
+    const parsedUser = userValidationSchema.parse(req.body);
+    const user: TUser = parsedUser as TUser;
 
-    // Send the new access token
-    return res.status(httpStatus.OK).json({
+    // Call the createUser service to handle user creation
+    const { result } = await UserServices.createTrainerInDb(user);
+
+    // Send the success response
+    res.status(201).json({
       success: true,
-      statusCode: httpStatus.OK,
-      message: 'Access token is retrieved successfully!',
-      data: result,
+      message: "Trainer created successfully",
+      data: { result },
+      // Include the generated JWT token in the response
     });
   } catch (error) {
-    return res.status(httpStatus.UNAUTHORIZED).json({
-      success: false,
-      statusCode: httpStatus.UNAUTHORIZED,
-      message: 'Invalid or expired refresh token. Please login again.',
-    });
-  }
-});
+    console.error(error);
 
-const getAllUserFromDb = async (req: Request, res: Response) => {
-  try {
-    const users = await UserServices.getAllUser();
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: 'Users retrieved successfully',
-      data: users,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: 'An error occurred while retrieving the users',
-      error: err instanceof Error ? err.message : 'Unknown error',
-    });
-  }
-};
-
-const getUserFromDb = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user._id; // Assuming you're attaching user ID to req.user after authentication
-    const user = await UserServices.getUser(userId);
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: 'User retrieved successfully',
-      data: user,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: 'An error occurred while retrieving the user',
-      error: err instanceof Error ? err.message : 'Unknown error',
-    });
-  }
-};
-const getAdminFromDb = async (req: Request, res: Response) => {
-  try {
-    const userId = req.user._id; // Assuming you're attaching user ID to req.user after authentication
-    const user = await UserServices.getAdmin(userId);
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: 'User retrieved successfully',
-      data: user,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: 'An error occurred while retrieving the user',
-      error: err instanceof Error ? err.message : 'Unknown error',
-    });
-  }
-};
-
-const updateUserinDb = async (req: Request, res: Response) => {
-  try {
-    const user: TUser = req.body;
-    const userId = req.user._id;
-
-    // Ensure the user ID (string) is passed first, then the user object
-    const result = await UserServices.updateUser(userId, user);
-
-    res.status(200).json({
-      success: true,
-      statusCode: 200,
-      message: 'User updated successfully',
-      data: result,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      statusCode: 500,
-      message: 'An error occurred while updating the user',
-      error: error instanceof Error ? error.message : 'Unknown error',
-    });
-  }
-};
-
-const updateUserRoleInDb = async (req: Request, res: Response) => {
-  try {
-    const userId = req.params.userId; // Ensure this corresponds to your route definition
-
-    const { role } = req.body;
-
-    // Ensure role is valid or defined as per your application's requirements
-    if (!role) {
+    // Handle validation errors from Zod
+    if (error instanceof ZodError) {
+      const validationError = error.errors[0]; // Get the first validation error
       return res.status(400).json({
         success: false,
-        statusCode: 400,
-        message: 'Role is required',
+        message: "Validation error occurred.",
+        errorDetails: {
+          field: validationError.path[0], // The field that caused the error
+          message: validationError.message, // The error message
+        },
       });
     }
 
-    const result = await UserServices.updateUserRole(userId, role);
+    // Check for specific custom errors
+    if (error instanceof Error && error.message === "Password is required") {
+      return res.status(400).json({
+        success: false,
+        message: "Password is required",
+      });
+    }
 
-    // Check if the user was found and updated
+    // Handle other errors (e.g., generic server errors)
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while creating the trainer.",
+    });
+  }
+};
+
+const getAllTrainers = async (req: Request, res: Response) => {
+
+  try {
+    const result = await UserServices.getAllTrainers();
+    res.status(200).json({
+      success: true,
+      message: "Trainers fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching trainers.",
+    });
+  }
+};
+
+const updateTrainer = async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.body;
+
+    const result = await UserServices.updateTrainer(_id, req.body);
+    res.status(200).json({
+      success: true,
+      message: "Trainer updated successfully",
+      data: result,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while updating the trainer.",
+    });
+  }
+};
+
+
+const deleteTrainer = async (req: Request, res: Response) => {
+  try {
+    const { _id } = req.body;
+    const result = await UserServices.deleteTrainerfromDb(_id);
     if (!result) {
       return res.status(404).json({
         success: false,
-        statusCode: 404,
-        message: 'User not found',
+        message: 'Trainer not found',
       });
     }
-
     res.status(200).json({
       success: true,
-      statusCode: 200,
-      message: 'User role updated successfully',
-      data: result, // This will contain the updated user details
+      message: "Trainer deleted successfully",
+      data: [],
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
-      statusCode: 500,
-      message: 'An error occurred while updating the user role',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      message: "An error occurred while deleting the user.",
     });
   }
 };
 
-export const UserControllers = {
-  SignUp,
-  SignIn,
-  forgetPassword,
-  refreshToken,
-  getUserFromDb,
-  updateUserinDb,
-  getAdminFromDb,
-  getAllUserFromDb,
-  updateUserRoleInDb,
-  resetPassword,
+export const UserController = {
+  adminRegister,
+  createTrainer,
+  adminSignIn,
+  deleteTrainer,
+  getAllTrainers,
+  updateTrainer
 };

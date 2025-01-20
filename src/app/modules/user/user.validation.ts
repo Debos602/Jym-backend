@@ -1,28 +1,25 @@
 import { z } from 'zod';
 import mongoose from 'mongoose'; // Import mongoose to use ObjectId
 
-// Validation schema for TUser
+
+
+// Define the Zod schema for TUser validation
 export const userValidationSchema = z.object({
-  name: z.string().min(1, 'Name is required'),
-  email: z.string().email('Invalid email address'),
-  role: z.enum(['user', 'admin']).default('user'),
-  password: z
-    .string()
-    .min(6, 'Password must be at least 6 characters long')
-    .optional(),
-  confirmPassword: z
-    .string()
-    .min(6, 'Confirm password must be at least 6 characters long')
-    .optional(),
-  needsPasswordChange: z.boolean().optional(),
-  passwordChangedAt: z.date().optional(),
-  phone: z.string().min(10, 'Phone number must be at least 10 digits'),
-  nid: z.string().optional(),
-  drivingLicense: z.string().optional(),
-  features: z.array(z.string()).optional(),
+  name: z.string().min(1, "Name is required"), // Ensure name is a non-empty string
+  email: z.string().email("Invalid email Format"), // Ensure valid email format
+  role: z.enum(['admin', 'trainer', 'trainee'], {
+    errorMap: () => {
+      return { message: "Invalid role. Choose between 'admin', 'trainer', or 'trainee'" };
+    }
+  }),
+  password: z.string().optional(), // Optional for the password
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
+
+// Use Zod's `parse` method to validate an object
+
+
 
 // Validation schema for TSignIn
 export const signInValidationSchema = z.object({
@@ -33,20 +30,5 @@ export const signInValidationSchema = z.object({
   password: z.string().min(6, 'Password must be at least 6 characters long'),
 });
 
-export const forgetPasswordValidationSchema = z.object({
-  body: z.object({
-    id: z.string({
-      required_error: 'User ID is required',
-    }),
-  }),
-});
-export const resetPasswordValidationSchema = z.object({
-  body: z.object({
-    id: z.string({
-      required_error: 'User ID is required',
-    }),
-    newPassword: z.string({
-      required_error: 'User password is required',
-    }),
-  }),
-});
+
+
