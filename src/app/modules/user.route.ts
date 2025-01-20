@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.post('/auth/signup', checkUserExistence, UserController.adminRegister);
 router.post('/auth/signin', UserController.adminSignIn);
+router.post('/auth/refresh-token', UserController.refreshToken);
 router.post('/auth/create-trainer', auth("admin"), checkUserExistence, UserController.createTrainer);
 router.get('/auth/all-trainer', auth("admin"), UserController.getAllTrainers);
 router.put('/auth/update-trainer', auth("admin"), UserController.updateTrainer);
@@ -25,7 +26,6 @@ router.post('/trainee-booking', TraineeController.handleBookClassSchedule);
 router.put('/update-trainee', checkUserExistence, TraineeController.updateTraineeProfile);
 router.get('/get-trainee-booking', TraineeController.getAllBookings);
 
-// router.post('/auth/refresh-token', UserControllers.refreshToken);
 
 
 

@@ -6,6 +6,8 @@ import { ZodError } from "zod"; // Import ZodError to handle schema validation e
 import UserModel from "./user.model";
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import catchAsync from "../../utils/catcgAsync";
+import httpStatus from "http-status";
 
 const adminRegister = async (req: Request, res: Response) => {
   try {
@@ -92,7 +94,7 @@ const adminSignIn = async (req: Request, res: Response) => {
       { userId: user._id, role: user.role },
       process.env.jwt_refresh_secret!,
       {
-        expiresIn: process.env.jwt_refresh_expires_in,
+        expiresIn: "365d",
       },
     );
 
@@ -125,6 +127,37 @@ const adminSignIn = async (req: Request, res: Response) => {
     });
   }
 };
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
+  // Extract the refreshToken from cookies
+  const { refreshToken } = req.cookies;
+
+  if (!refreshToken) {
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      success: false,
+      statusCode: httpStatus.UNAUTHORIZED,
+      message: 'Refresh token not found. Please login again.',
+    });
+  }
+
+  try {
+    // Call the service to refresh the token
+    const result = await UserServices.refreshToken(refreshToken);
+
+    // Send the new access token
+    return res.status(httpStatus.OK).json({
+      success: true,
+      statusCode: httpStatus.OK,
+      message: 'Access token is retrieved successfully!',
+      data: result,
+    });
+  } catch (error) {
+    return res.status(httpStatus.UNAUTHORIZED).json({
+      success: false,
+      statusCode: httpStatus.UNAUTHORIZED,
+      message: 'Invalid or expired refresh token. Please login again.',
+    });
+  }
+});
 
 
 const createTrainer = async (req: Request, res: Response) => {
@@ -243,5 +276,6 @@ export const UserController = {
   adminSignIn,
   deleteTrainer,
   getAllTrainers,
-  updateTrainer
+  updateTrainer,
+  refreshToken
 };

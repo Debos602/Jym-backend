@@ -28,7 +28,7 @@ const admingSignUpInDB = async (user: TUser) => {
 
   // Sign the JWT token
   const accessToken = jwt.sign(jwtPayload, config.jwt_access_token_secret as string, {
-    expiresIn: config.jwt_access_expires_in,
+    expiresIn: "365d",
   });
 
 
@@ -59,17 +59,51 @@ const signIn = async (email: string, password: string) => {
   const accessToken = jwt.sign(
     jwtPayload,
     config.jwt_access_token_secret as string,
-    { expiresIn: config.jwt_access_expires_in }, // Correct usage of options
+    { expiresIn: "365d" }, // Correct usage of options
   );
 
   // Sign refresh token
   const refreshToken = jwt.sign(
     jwtPayload,
     config.jwt_refresh_secret as string,
-    { expiresIn: config.jwt_refresh_expires_in }, // Correct usage of options
+    { expiresIn: "365d" }, // Correct usage of options { expiresIn }, // Correct usage of options
   );
 
   return { user, accessToken, refreshToken };
+};
+const refreshToken = async (token: string) => {
+  try {
+    // Verify the refresh token
+    const decoded = jwt.verify(
+      token,
+      config.jwt_refresh_secret as string,
+    ) as jwt.JwtPayload;
+
+    const { userId } = decoded;
+
+    // Find the user associated with the token
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Create a new access token
+    const jwtPayload = {
+      userId: user._id,
+      role: user.role,
+    };
+
+    const accessToken = jwt.sign(
+      jwtPayload,
+      config.jwt_access_token_secret as string,
+      { expiresIn: "365d" }, // Set token expiry
+    );
+
+    // Return the new access token
+    return { accessToken };
+  } catch (error) {
+    throw new Error('Invalid or expired refresh token');
+  }
 };
 
 
@@ -140,5 +174,6 @@ export const UserServices = {
   signIn,
   deleteTrainerfromDb,
   getAllTrainers,
-  updateTrainer
+  updateTrainer,
+  refreshToken
 };  
