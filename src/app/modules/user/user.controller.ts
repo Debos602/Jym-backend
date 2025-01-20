@@ -67,7 +67,7 @@ const adminSignIn = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(401).json({
         success: false,
-        statusCode: 404,
+        statusCode: 401, // Use 401 for unauthorized access
         message: 'Invalid email or password',
       });
     }
@@ -81,7 +81,7 @@ const adminSignIn = async (req: Request, res: Response) => {
     if (!isPasswordValid) {
       return res.status(401).json({
         success: false,
-        statusCode: 404,
+        statusCode: 401, // Use 401 for unauthorized access
         message: 'Invalid email or password',
       });
     }
@@ -94,7 +94,7 @@ const adminSignIn = async (req: Request, res: Response) => {
       { userId: user._id, role: user.role },
       process.env.jwt_refresh_secret!,
       {
-        expiresIn: "365d",
+        expiresIn: "365d", // Set refresh token expiration to 365 days
       },
     );
 
@@ -102,10 +102,11 @@ const adminSignIn = async (req: Request, res: Response) => {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true, // Prevent JavaScript access to the cookie
       secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // Set cookie expiration (1 year)
+      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year expiration
+      sameSite: 'none',  // Required for cross-origin requests
     });
 
-    // Send response
+    // Send response with user data and access token
     res.status(200).json({
       success: true,
       message: 'User logged in successfully',
@@ -127,6 +128,7 @@ const adminSignIn = async (req: Request, res: Response) => {
     });
   }
 };
+
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
   // Extract the refreshToken from cookies
   const { refreshToken } = req.cookies;
