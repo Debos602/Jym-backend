@@ -9,7 +9,7 @@ import globalErrorHandler from './app/Middlewar/globalErrorHandler';
 const app: Application = express();
 
 const corsOptions = {
-  origin: 'http://localhost:5173', // specify your frontend origin
+  origin: 'https://sportings-goods-server.vercel.app', // specify your frontend origin
   credentials: true, // allow credentials like cookies or authorization headers
 };
 
