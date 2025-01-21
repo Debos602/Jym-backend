@@ -1,0 +1,411 @@
+{
+	"info": {
+		"_postman_id": "3dff7bc3-88f1-43d4-aea1-f588cd9d2dd7",
+		"name": "Jym-manement",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "33131327"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "adminSignUp",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \r\n    \"name\":\"Debos Das\",\r\n    \"email\":\"debos.das.02@gmail.com\",\r\n    \"role\":\"admin\",\r\n    \"password\":\"123456\"\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/auth/signup",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"debos.das.02@gmail.com\",\r\n    \"password\":\"123456\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/auth/signin",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "trainer",
+			"item": [
+				{
+					"name": "create-trainer",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhkMTBkNmIxOGUyNzU0YjQ2ZTM0NjciLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzcyOTk0OTQsImV4cCI6MTc2ODgzNTQ5NH0.xsOG9T0lleAASNEGyiUrTsp5YZ0Tbe_XON366ujc8-w",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{   \r\n    \"name\":\"Rupash9901\",\r\n    \"email\":\"rupash9901@gmail.com\",\r\n    \"role\":\"trainer\",\r\n    \"password\":\"123456\"\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/auth/create-trainer",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"auth",
+								"create-trainer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete-trainer",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhkMTBkNmIxOGUyNzU0YjQ2ZTM0NjciLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzcyOTk5MjQsImV4cCI6MTc2ODgzNTkyNH0.CYgxZJOsIE95-L3kZECBmKFL1btoU04lw50fP9ppZw4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"_id\":\"678d0b34dee0f9ea91896f5e\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/auth/delete-trainer",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"auth",
+								"delete-trainer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-trainer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/auth/update-trainer",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"auth",
+								"update-trainer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllTrainer",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhkMTBkNmIxOGUyNzU0YjQ2ZTM0NjciLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzcyOTk5MjQsImV4cCI6MTc2ODgzNTkyNH0.CYgxZJOsIE95-L3kZECBmKFL1btoU04lw50fP9ppZw4",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/auth/all-trainer",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"auth",
+								"all-trainer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "class-schedule",
+			"item": [
+				{
+					"name": "class-schedule",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzhkMDdiM2UzZDI3N2E1ZWZhM2M4ZjciLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3MzczMTE2ODUsImV4cCI6MTc2ODg0NzY4NX0.Cj8mCndvaoKAUne4zf9hxoKlV6Pf8X4scaEEOKTAWhI",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Yoga Class\",\r\n    \"date\": \"2025-01-05\",\r\n    \"startTime\": \"10:00 AM\",\r\n    \"endTime\": \"2:00 PM\",\r\n    \"trainer\": \"678d17ff13e78a01a7800683\"\r\n}\r\n\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/schedule-class",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"schedule-class"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllClass/singleClass",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"_id\": \"678d65c55b43eb931eea392c\",\r\n            \"title\": \"Free style Class\",\r\n            \"date\": \"2024-01-22T00:00:00.000Z\",\r\n            \"startTime\": \"11:00 AM\",\r\n            \"endTime\": \"12:00 PM\",\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/schedule-class",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"schedule-class"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "trainee",
+			"item": [
+				{
+					"name": "create-trainee",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Trainee88\",\r\n  \"email\": \"Trainee88@example.com\",\r\n  \"phone\": \"1234567890\",\r\n  \"password\": \"password123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/create-trainee",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"create-trainee"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update-trainee",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"_id\":\"678d92479bbd719166891b9e\",\r\n    \"phone\":\"01834491602\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/update-trainee",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"update-trainee"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "trainee-booking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n        \r\n        \"class\": \"678d65cb5b43eb931eea3930\",\r\n        \"trainees\": [\r\n            {\r\n                \"_id\": \"678e4a408fce9962f0c66da9\"\r\n            }\r\n        ]\r\n    }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/trainee-booking",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"trainee-booking"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get-trainee-booking",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://jym-backend.vercel.app/api/get-trainee-booking",
+							"protocol": "https",
+							"host": [
+								"jym-backend",
+								"vercel",
+								"app"
+							],
+							"path": [
+								"api",
+								"get-trainee-booking"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

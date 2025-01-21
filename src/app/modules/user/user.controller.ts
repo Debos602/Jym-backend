@@ -175,7 +175,7 @@ const createTrainer = async (req: Request, res: Response) => {
     res.status(201).json({
       success: true,
       message: "Trainer created successfully",
-      data: { result },
+      data: result,
       // Include the generated JWT token in the response
     });
   } catch (error) {

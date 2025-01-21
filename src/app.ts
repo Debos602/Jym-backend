@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from 'express';
+import cors from 'cors';
 import cookieParser from 'cookie-parser'; // Import cookie-parser
 import { UserRoutes } from './app/modules/user.route';
 import globalErrorHandler from './app/Middlewar/globalErrorHandler';
@@ -7,8 +8,13 @@ import globalErrorHandler from './app/Middlewar/globalErrorHandler';
 
 const app: Application = express();
 
+const corsOptions = {
+  origin: true, // specify your frontend origin
+  credentials: true, // allow credentials like cookies or authorization headers
+};
 
 app.use(express.json());
+app.use(cors(corsOptions));
 app.use(cookieParser()); // Add cookie-parser middleware
 
 // Register routes
