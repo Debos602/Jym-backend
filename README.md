@@ -194,7 +194,7 @@ Certainly, let's create an ER diagram (Entity-Relationship Diagram) based on the
    - Refer to `.env.example` and create a `.env` file with appropriate values.
 4. **Start the server:**
    ```bash
-   npm run dev
+   npm run start:dev
    ```
 5. **Access the application:**
    - Server runs on `http://localhost:5000`.
@@ -210,6 +210,7 @@ https://jym-backend.vercel.app
 
 1. **Admin Login:**
    - Use the provided credentials to log in.
+   - Email: debos.das.02@gmail.com,  password: 123456 
 2. **Feature Testing:**
    - **Trainer Management:** Add, update, delete, and fetch trainers.
    - **Class Scheduling:** Create, update, delete, and view class schedules.
@@ -217,8 +218,4 @@ https://jym-backend.vercel.app
 3. **Postman Collection:**
    - Import the provided Postman collection for API testing.
 
----
-
-### Note
-This documentation assumes the backend is set up with the file structure shown in the image. Adjustments can be made based on project-specific requirements.
 
