@@ -1,11 +1,10 @@
-
-// Sign-Up Function
 import { hash } from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { TUser } from "./user.interface";
 import config from "../../config";
 import UserModel from "./user.model";
 
+// Admin Sign-Up Function
 const admingSignUpInDB = async (user: TUser) => {
   if (!user.password) {
     throw new Error("Password is required");
@@ -31,11 +30,10 @@ const admingSignUpInDB = async (user: TUser) => {
     expiresIn: "365d",
   });
 
-
-
   return { result, accessToken }; // Return the user without the password and the token
 };
 
+// Sign-In Function
 const signIn = async (email: string, password: string) => {
   // Fetch user by email
   const user = await UserModel.findOne({ email });
@@ -66,11 +64,13 @@ const signIn = async (email: string, password: string) => {
   const refreshToken = jwt.sign(
     jwtPayload,
     config.jwt_refresh_secret as string,
-    { expiresIn: "365d" }, // Correct usage of options { expiresIn }, // Correct usage of options
+    { expiresIn: "365d" }, // Correct usage of options
   );
 
   return { user, accessToken, refreshToken };
 };
+
+// Refresh Token Function
 const refreshToken = async (token: string) => {
   try {
     // Verify the refresh token
@@ -106,7 +106,7 @@ const refreshToken = async (token: string) => {
   }
 };
 
-
+// Create Trainer Function
 const createTrainerInDb = async (user: TUser) => {
   if (!user.password) {
     throw new Error("Password is required");
@@ -132,17 +132,16 @@ const createTrainerInDb = async (user: TUser) => {
     expiresIn: config.jwt_access_expires_in,
   });
 
-
-
   return { result, accessToken };
-
 };
 
+// Get All Trainers Function
 const getAllTrainers = async () => {
   const result = await UserModel.find({ role: "trainer" });
   return result;
 };
 
+// Update Trainer Function
 const updateTrainer = async (_id: string, updateData: Partial<TUser>) => {
   // Find the trainer by ID and update it with the new data
   const result = await UserModel.findByIdAndUpdate(_id, updateData, {
@@ -158,16 +157,13 @@ const updateTrainer = async (_id: string, updateData: Partial<TUser>) => {
   return result;
 };
 
-
+// Delete Trainer Function
 const deleteTrainerfromDb = async (_id: string) => {
   const result = await UserModel.findByIdAndDelete(_id);
   return result;
 };
 
-
-
-// Sign-In Function
-
+// Export User Services
 export const UserServices = {
   admingSignUpInDB,
   createTrainerInDb,
@@ -176,4 +172,4 @@ export const UserServices = {
   getAllTrainers,
   updateTrainer,
   refreshToken
-};  
+};
