@@ -13,7 +13,69 @@ Include an ERD showcasing relationships between:
 - Class Schedules
 - Trainees
 
-*(Attach or provide a link to the relational diagram image.)*
+Certainly, let's create an ER diagram (Entity-Relationship Diagram) based on the provided data model and relationships.
+
+**Entities:**
+
+* **User**
+    * Fields: name, email, password, role (admin, trainer, trainee), createdAt, updatedAt
+* **Trainer**
+    * Fields: name, expertise, availability, createdAt, updatedAt
+* **Class Schedule**
+    * Fields: title, description, trainerId (foreign key to Trainer), timing, createdAt, updatedAt
+* **Trainee**
+    * Fields: name, age, classesEnrolled (array of foreign keys to Class Schedule), contactInfo, createdAt, updatedAt
+
+**Relationships:**
+
+1. **User** (1:N) **Trainer** 
+    * One User can be associated with many Trainers.
+2. **User** (1:N) **Trainee** 
+    * One User can be associated with many Trainees.
+3. **Trainer** (1:N) **Class Schedule** 
+    * One Trainer can conduct many Class Schedules.
+4. **Class Schedule** (1:N) **Trainee** 
+    * One Class Schedule can have many Trainees enrolled.
+
+**ER Diagram:**
+
+```
++-------------------+     +-------------------+     +-------------------+
+|       User        |     |     Trainer       |     | Class Schedule   |
++-------------------+     +-------------------+     +-------------------+
+| name             |     | name             |     | title            |
+| email            |     | expertise        |     | description      |
+| password         |     | availability     |     | trainerId (FK)    |
+| role (enum)      |     | createdAt        |     | timing           |
+| createdAt        |     | updatedAt        |     | createdAt        |
+| updatedAt        |     +-------------------+     | updatedAt        |
++-------------------+                                 +-------------------+
+  |                                                       |
+  |                                                       |
+  |--------------------------------------------------------|
+                                                           |
+                                                           |
+                                                           |
++-------------------+
+|     Trainee      |
++-------------------+
+| name            |
+| age             |
+| classesEnrolled (FK array) |
+| contactInfo     |
+| createdAt        |
+| updatedAt        |
++-------------------+
+```
+
+**Explanation:**
+
+* **User** entity is the base for both **Trainer** and **Trainee** entities, representing the shared attributes like name, email, password, etc.
+* The **role** attribute in the **User** entity determines whether a user is an admin, trainer, or trainee.
+* The **trainerId** foreign key in the **Class Schedule** entity links it to the **Trainer** entity.
+* The **classesEnrolled** attribute in the **Trainee** entity stores an array of foreign keys to the **Class Schedule** entity, representing the schedules the trainee is enrolled in.
+
+
 
 ---
 
@@ -140,7 +202,7 @@ Include an ERD showcasing relationships between:
 ---
 
 ## Live Hosting Link
-[Live Application URL](#)
+https://jym-backend.vercel.app
 
 ---
 
